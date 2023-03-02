@@ -1,7 +1,7 @@
 # 取り組んだ課題     
-- プログラミング中級者になりたい人のためのクリーンコード入門 | Udemy
-- JavaScriptメカニズム | Udemy
-- 
+- クリーンコード入門 | Udemy
+- TypeScript徹底入門 | Udemy
+- JSメカニズム | Udemy
 # わかったこと   
 ### 
 - 
