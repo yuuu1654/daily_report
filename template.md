@@ -2,6 +2,8 @@
 - クリーンコード入門 | Udemy
 - TypeScript徹底入門 | Udemy
 - JSメカニズム | Udemy
+- web技術の基本を学ぶ Qiita記事作成
+- NeoVim(VIM)+Tmux+Zsh | Udemy
 # わかったこと   
 ### 
 - 
