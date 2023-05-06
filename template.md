@@ -4,6 +4,7 @@
 - JSメカニズム | Udemy
 - web技術の基本を学ぶ Qiita記事作成
 - NeoVim(VIM)+Tmux+Zsh | Udemy
+- 米国AI開発者がゼロから教えるDocker講座 | Udemy
 # わかったこと   
 ### 
 - 
