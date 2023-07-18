@@ -5,6 +5,10 @@
 - web技術の基本を学ぶ Qiita記事作成
 - NeoVim(VIM)+Tmux+Zsh | Udemy
 - 米国AI開発者がゼロから教えるDocker講座 | Udemy
++ Progate/React
++ 【Next.js入門】ReactフレームワークのNext.jsでマイクロブログを構築しながら基礎と本質を学ぶ講座
++ 米国AI開発者がゼロから教えるDocker講座(Udemy)
++ dockerで開発環境を構築する
 # わかったこと   
 ### 
 - 
