@@ -20,7 +20,17 @@
 
 
  # GemfileとGemfile.lockについて
- 
+
 + Rails Serverを起動するにはGemfile.lockに記載されているgemが事前にインストールされている必要がある
 + Gemfile.lockに記載されているgemがインストールされていなかったり、バージョンが異なる場合にはエラーが出て起動に失敗する
     + こういった場合には、コンテナで`bundle install`コマンドを実行して、Gemfile.lockに沿ったgemをインストールする事で対処できる
+
++ `RUN bundle config --local path vendor/bundle`で、gemの保存先をvendor/bundleに変更して、gemのバージョンをgitで管理するようにできる
++ gemでインストールされたコマンドを実行する場合、`bundle exec <コマンド>`という形式でコマンドを実行する必要がある
++ `vendor/bundle`は、Bundlerを使用してRubyのプロジェクトでgemの依存関係を管理する際の、カスタムの
+gemインストールパスであり、デフォルトでは、Bundlerはシステムのgemディレクトリにgemをインストールする
++ Controllerとしての機能を持たせるためには、ApplicationControllerを継承しないといけない
++ gem "sassc-rails", "2.1.2" # Sassをプリコンパイルするためのgem
++ gem "mini_racer", "0.8.0" # Rails環境でJavaScriptを実行するためのgem
++ インストールしたいgemをGemfileに記載したら、再度 `docker compose build` を実行することで、gemがインストールされる
++ 
