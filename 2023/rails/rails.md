@@ -50,3 +50,6 @@ gemインストールパスであり、デフォルトでは、Bundlerはシス�
 + `rails db:seed`コマンドは、データベースのシードデータをロードするために使う
     + `db/seeds.rb`ファイル内に記載されたコードが実行され、コードに従ってDBに初期データが挿入される
     + 開発初期やテスト用のデータセットアップ、本番環境でのマスターデータのロードなどに利用される
+    + `rails db:seed`は、基本的に冪等性はない状態にして使う
+    + `seeds.rb`で、`Product.create!`としてやると、例外を意図的に発生させることができる
++ DockerとDocker Compose を使用している開発環境のデータベース内のデータを確認するには、`docker compose run web rails console`を使用
