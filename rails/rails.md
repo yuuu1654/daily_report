@@ -165,3 +165,14 @@ class User < ApplicationRecord
   belongs_to :project, optional: true
 end
 ```
+
+# `bundle exec rake`と`rails`コマンドの違い
++ コマンドの範囲
+  + `rake`は、Rubyのための汎用的なタスクランナーで、Rails以外のプロジェクトでも使われる
+  + `rails`コマンドは、Rails固有のタスクに特化している
++ 使用するRailsのバージョン
+  + Rails5.0以降では`rails`コマンドを使用することを推奨
+  + Rails4.2以前では、これらのタスクには`rake`コマンドを使う
++ `bundle exec`の使用
+  + Bundlerを使用して、正しいバージョンのgemを使ってコマンドを実行 (依存関係の衝突を防ぐために重要)
+  + `rails`コマンドを使う場合、Bundlerが自動的に正しいバージョンのRailsを使ってくれる
