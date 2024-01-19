@@ -176,3 +176,31 @@ end
 + `bundle exec`の使用
   + Bundlerを使用して、正しいバージョンのgemを使ってコマンドを実行 (依存関係の衝突を防ぐために重要)
   + `rails`コマンドを使う場合、Bundlerが自動的に正しいバージョンのRailsを使ってくれる
+
+### `Hotwire (Turbo)` 
++ `Turbo`は、Turbo Streamsを介して動作し、小さなHTMLスニペット(断片)をWebSocketで直接ページに送信する
++ `respond_to`メソッド
+  + `format.html`と`format.turbo_stream`の行のうち1つしか実行されない (if-elsif的に実行される)
+  + `format.turbo_stream`を追加すると、Railsが`<アクション名>.turbo_stream.erb`のファイルを探索する
++ `Hotwire`とは、Rails7からRailsのデフォルトになった、モダンなWebアプリケーションを作るための新しいアプローチのこと
+  + `Turbo`・`Stimulus`・`Strada`という3つの技術から構成される
+  + Turboは、`Turbo Drive`・`Turbo Frames`・`Turbo Streams`・`Turbo Native`の4つの技術から構成される
+  + Turboは、Hotwireの中核となるJavaScriptライブラリで、Turboを使うとJavaScriptを書かずにSPAを実現できる
+  + フロントエンドの技術選定では、ReactかVueを選択するのが主流だが、Hotwireが最適なケースも結構存在する
+```rb
+respond_to do |format|
+  format.html { redirect_to user, status: :see_other }
+  format.turbo_stream
+end
+```
+
+### `gem install [gem名]`とGemfileに記述して`bundle install`する時の違い
++ `gem install [gem名]`
+  + 指定されたgemをRuby環境に直接インストールする
+  + インストールされたgemは、システムの全てのRubyプロジェクトで利用可能
+  + プロジェクトごとの依存関係の管理は行われない
+  + 特定のプロジェクトのGemfileには影響を与えない
++ Gemfileに記述して、bundle install
+  + 特定のRubyプロジェクトの依存関係を管理するために使用される
+  + 記述されたgemは、bundle installすることで、そのプロジェクト用にインストールされる
+  + プロジェクト内でのみこれらのgemが利用可能

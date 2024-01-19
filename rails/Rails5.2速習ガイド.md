@@ -1,10 +1,40 @@
 
 # 1.RailsのためのRuby
 
+## %記法
++ 全ての要素が文字列である配列は、**%w**キーワードで書き換えられる
+```rb
+ary1 = %w(foo, bar, baz)
+puts ary1
+# => ["foo", "bar", "baz"]
+```
++ 全ての要素がシンボルである配列は、**%i**キーワードで書き換えられる
+```rb
+resources :products, only: [:index, :show]
+resources :products, only: %i[index show]
+```
 
 # 2.インストール・セットアップ
 
+## Rubyのパッケージ管理ツール
++ Ruby本体でも動作するが、公開されているサードパーティのライブラリを利用すると素早く生産的にプログラミングができる
++ 上記のライブラリは、**gem**という形式でパッケージ化されて配布されている
++ **RubyGems**というパッケージ管理ツールが、gemのインストールや管理を簡単にしてくれる
+  + JavaScriptだと`Yarn`や`npm`などが有名
+  + インストールやアップデートは`gemコマンド`を利用
 
+## Bundler
++ **Bundler**は、プロジェクトで使うgemを束ね、「どのgemを、どのバージョンで利用するのか」を管理する仕組み
++ プロジェクト直下に**Gemfile**というファイルを作成して、gemの名前を記載しておくと、その通りにインストールしたり、gemをRubyから利用できる
++ Bunderは、RubyGemからgemコマンドでインストールできる
++ Bunderには、**bundle**から始まるいくつかサブコマンドが用意されている
+  + `bundle install`もしくは単に`bundle`
+    + Gemfileに書かれたgemをインストールする
+    + **Gemfile.lock**というファイルが作成され、Bundlerが管理するgemのバージョンや依存関係が記される
+  + `bundle exec`
+    + Bundlerが管理するgemを利用可能な状態で実行する
+  + `bundle update`
+    + Bundlerが管理するgemのバージョンを更新する
 
 # 3.アプリ作成の流れ
 
