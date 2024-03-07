@@ -1,6 +1,3 @@
-rails/x_clone.md
-2024/02/memo.md
-2024/サボった時の対処法.md
 
 # 疑問
 ## confirmable (deviseのモジュール)を導入した際にサインアップ出来ない
@@ -102,6 +99,7 @@ end
 + ActiveStorageを使用していれば、画像用のカラムを新たにモデルに追加する必要はなく、専用の`active_storage_attachments`と`active_storage_blobs`の2つのテーブルを内部で使用してアップロードされた画像ファイルとアプリケーション内のモデルとの間の関連付けを管理してくれる
 + 改行を考慮した投稿を実現するには、`simple_format`を使う
 + スタッシュを適用して破棄するコマンド : `git stash pop stash@{0}`
++ `git reset --soft HEAD^`で、直前のコミットを無かったことにして、作業内容はワーキングディレクトリにそのまま残った状態で戻る
 
 # 環境構築
 + `Render`の設定
@@ -165,10 +163,6 @@ end
      1. `docker-compose run js yarn install`
 + Tweetモデル・テーブルの作成
   + `docker-compose run web rails g model tweet user:references content:string`
-+ Followsテーブル
-  + `docker-compose run web rails g model follow follower:references followed:references`
-  + follower_idとfollowed_idの組み合わせはただ一つ
-  + follower_idとfollowed_idは同じになってはいけない (自己フォロー防止)
 + tweetsコントローラ
   + `docker-compose run web rails g controller tweets create show edit update destroy`
 
@@ -297,11 +291,44 @@ has_many :passive_relationships, class_name: "Follow",
                                 dependent: :destroy
 has_many :followers, throught: :active_relationships, source: :follower
 ```
++ Followsテーブル
+  + `docker-compose run web rails g model follow follower:references followed:references`
+  + follower_idとfollowed_idの組み合わせはただ一つ
+  + follower_idとfollowed_idは同じになってはいけない (自己フォロー防止)
 + relationshipsコントローラ作成
   + `docker-compose run web rails g controller relationships`
 
 # ブックマーク機能
+
+
+
 # メッセージ機能
+メッセージ一覧を管理するためのRoomモデルを作成
+
+
++ ユーザー名用のカラム追加
+  + `docker compose run web rails g migration add_username_to_users`
++ Roomモデル
+  + メッセージ一覧を管理するために作成
+    + `docker compose run web rails g model Room`
+  + messagesテーブルにroom_idを持たせるマイグレーションの作成
+    + `docker compose run web rails g migration add_room_id_to_messages room:references`
+  + roomsテーブルにuser_idを持たせる
+    + `docker compose run web rails g migration AddUserIdToRooms user:references`
++ roomsコントローラ
+  + `docker compose run web rails g controller rooms`
++ Messageモデル
+  + `docker compose run web rails g model message sender_id:references recipient_id:references body:text`
+  + `references型`として指定した場合、以下の二点のメリットがある
+    + 外部キー制約
+      + データベースレベルで外部キー制約が設定され、参照整合性が保たれる。つまり、存在しないuser_idなどが設定されるのを防ぐ
+    + インデックスの自動生成
+      + 関連するカラムに自動的にインデックスが生成され、ジョイン操作などのパフォーマンスが向上
+    + マイグレーションファイルの外部キー関連の記述
+      + マイグレーションファイルに`add_foreign_key`のような外部キー制約に関する記述が自動で追加される
++ messagesコントローラ
+  + `docker compose run web rails g controller messages`
+
 # 通知機能
 
 
