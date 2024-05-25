@@ -61,46 +61,6 @@ Extracted source (around line #253):
     end
 ```
 
-# メモ (手順外)
-+ N+1クエリ問題
-  + ビュー内でクエリを実行すると、表示するツイートの数だけクエリが発行されてしまうのでパフォーマンスが悪化する
-  + 以下のようにツイートを事前に取得する際に、ActiveRecordの`includesメソッド`を使って関連するユーザーデータを事前に読み込む(プリロード)ことが有効
-    + `@tweets = Tweet.includes(:user).all`
-+ リモートにpushしたコミットを打ち消したい時
-  + 1. `git revert commitハッシュ値`で、指定したコミットまで戻した打ち消しコミットを作成
-  + 2. `git reset --hard HEAD^`をやってファイルの変更もコミットも完全に破棄して、`git push origin main -f`
-## find, find_by, whereメソッドの違い (2024-02-07)
-+ `find`メソッドは、検索する時のキーがidのみ
-+ `find_by`メソッドは、検索する時のキーがid以外の場合 (idも可)
-  + 返ってくるデータは、最初にヒットした一件のみ
-+ `where`メソッドは、検索する時のキーがid以外の場合で、すべてのデータが返ってくる
-## 検索条件はモデルにscopeとして移植する
-```rb
-scope :following_tweets, ->(user_id, page) {
-  where(user_id: user_id)
-  .includes(:user)
-  .order(created_at: :desc)
-  .page(page)
-  .per(10)
-}
-```
-## マイグレーション (複数カラムの組み合わせを一意にする)
-```rb
-class AddUniqueConstraintToLikes < ActiveRecord::Migration[7.0]
-  def change
-    add_index :likes, [:user_id, :tweet_id], unique: true
-  end
-end
-
-```
-
-## その他
-+ whereメソッドは、常に`ActiveRecord::Relation`を返すので、単一のレコードを取得して、.idなどのメソッドを使いたい場合は、`find_byメソッド`を使う
-+ ActiveStorageを使用していれば、画像用のカラムを新たにモデルに追加する必要はなく、専用の`active_storage_attachments`と`active_storage_blobs`の2つのテーブルを内部で使用してアップロードされた画像ファイルとアプリケーション内のモデルとの間の関連付けを管理してくれる
-+ 改行を考慮した投稿を実現するには、`simple_format`を使う
-+ スタッシュを適用して破棄するコマンド : `git stash pop stash@{0}`
-+ `git reset --soft HEAD^`で、直前のコミットを無かったことにして、作業内容はワーキングディレクトリにそのまま残った状態で戻る
-
 # 環境構築
 + `Render`の設定
   + マスターキーを作り直す
@@ -298,7 +258,15 @@ has_many :followers, throught: :active_relationships, source: :follower
 + relationshipsコントローラ作成
   + `docker-compose run web rails g controller relationships`
 
+
+
 # ブックマーク機能
++ `bookmark`テーブル作成
+  + `docker-compose run web rails g model bookmark user:references tweet:references`
++ bookmarksコントローラ作成
+  + `docker-compose run web rails g controller bookmarks`
++ ユニーク制約のマイグレーション
+  + `docker-compose run web rails g migration add_unique_constraint_to_bookmarks`
 
 
 
@@ -329,6 +297,79 @@ has_many :followers, throught: :active_relationships, source: :follower
 + messagesコントローラ
   + `docker compose run web rails g controller messages`
 
+
++ roomsテーブルからuser_idを削除するマイグレーション作成
+  + `docker compose run web rails g migration RemoveUserIdFromRooms`
++ Entryモデル/entriesテーブルの作成
+  + `docker compose run web rails g model entry user:references room:references`
++ messagesテーブルからuser_idを削除するマイグレーション作成
+  + `docker compose run web rails g migration RemoveUserIdFromMessages`
+
 # 通知機能
++ Notificationモデル作成
+  + `docker compose run web rails g model Notification`
++ notificationsコントローラ
+  + `docker compose run web rails g controller notifications`
++ 通知のメール送信用メーラー
+  + `docker compose run web rails g mailer NotificationMailer notification_email`
++ `checkedカラム`のデフォルトを設定
+  + `docker compose run web rails g migration AddDefaultToNotificationsChecked`
 
 
+
+# メモ (手順外)
++ N+1クエリ問題
+  + ビュー内でクエリを実行すると、表示するツイートの数だけクエリが発行されてしまうのでパフォーマンスが悪化する
+  + 以下のようにツイートを事前に取得する際に、ActiveRecordの`includesメソッド`を使って関連するユーザーデータを事前に読み込む(プリロード)ことが有効
+    + `@tweets = Tweet.includes(:user).all`
++ リモートにpushしたコミットを打ち消したい時
+  + 1. `git revert commitハッシュ値`で、指定したコミットまで戻した打ち消しコミットを作成
+  + 2. `git reset --hard HEAD^`をやってファイルの変更もコミットも完全に破棄して、`git push origin main -f`
+## find, find_by, whereメソッドの違い (2024-02-07)
++ `find`メソッドは、検索する時のキーがidのみ
++ `find_by`メソッドは、検索する時のキーがid以外の場合 (idも可)
+  + 返ってくるデータは、最初にヒットした一件のみ
++ `where`メソッドは、検索する時のキーがid以外の場合で、すべてのデータが返ってくる
+## 検索条件はモデルにscopeとして移植する
+```rb
+scope :following_tweets, ->(user_id, page) {
+  where(user_id: user_id)
+  .includes(:user)
+  .order(created_at: :desc)
+  .page(page)
+  .per(10)
+}
+```
+## マイグレーション (複数カラムの組み合わせを一意にする)
+```rb
+class AddUniqueConstraintToLikes < ActiveRecord::Migration[7.0]
+  def change
+    add_index :likes, [:user_id, :tweet_id], unique: true
+  end
+end
+
+```
+
+## belongs_to関連づけ (モデルのインスタンス名とクラス名が違う場合)
++ 以下のように`belongs_to`関連付けは、指定したモデルのインスタンスとの関連付けを意味しており、:senderIdとしてしまうと、Railsが`SenderId`という名前のモデルを関連付けるものと解釈してしまう
+  + そのモデル名から関連しているクラス名を推測できない場合は、`class_name:オプション`でクラス名を明示する
+  + そのモデルが、「どの外部キーを使っているのか」を`foreign_keyオプション`で指定する
+```rb
+belongs_to :sender, class_name: 'User', foreign_key: 'sender_id'
+```
++ 双方向関連付けの手動設定
+  + `has_many, has_one, belongs_to..`などで関連付けを行うときに規約と違う名前を使うときは、`:inverse_of`で関連先から関連名を書くことで、ActiveRecordに双方向の関連付けを教えることができる
+
+## その他
++ whereメソッドは、常に`ActiveRecord::Relation`を返すので、単一のレコードを取得して、.idなどのメソッドを使いたい場合は、`find_byメソッド`を使う
++ ActiveStorageを使用していれば、画像用のカラムを新たにモデルに追加する必要はなく、専用の`active_storage_attachments`と`active_storage_blobs`の2つのテーブルを内部で使用してアップロードされた画像ファイルとアプリケーション内のモデルとの間の関連付けを管理してくれる
++ 改行を考慮した投稿を実現するには、`simple_format`を使う
++ スタッシュを適用して破棄するコマンド : `git stash pop stash@{0}`
++ `git reset --soft HEAD^`で、直前のコミットを無かったことにして、作業内容はワーキングディレクトリにそのまま残った状態で戻る
++ `rails db:migrate`を実行して問題ないことを確認したら、`rails db:migrate:redo`を実行してバージョンを下げた時にエラーを起こさないことを確認する習慣をつける
++ `room.messages.last.body.truncate(10)`で、文字列を切り捨てて省略表示できる
++ 以下のコードだと、`@messages`の要素の数だけ画面をレンダリングするので、テンプレート内ではeach文は使わないようにする
+  + each文を使う際は、`render template: 'messages/feed'`としてやる
+```rb
+= render template: 'messages/feed', collection: @messages
+```
