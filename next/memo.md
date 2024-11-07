@@ -1,58 +1,63 @@
+- `rm -rf .next/cache`
+  - next のキャッシュ削除
+  - image サーバーで持っている画像のリフレッシュをする場合とかに使う
 
-+ `rm -rf .next/cache`
-  + nextのキャッシュ削除
-  + imageサーバーで持っている画像のリフレッシュをする場合とかに使う
-
-- `クライアント`
+* `クライアント`
   - ユーザーのデバイス上のブラウザのこと
   - アプリケーションコードの要求をサーバーに送信する
   - 次に、サーバーから受信した応答をユーザーが操作できるインターフェースに変換する
   - 注意
     - クライアントでデータを取得する際に、データベースを直接クエリしないようにする (データベースの紐つ情報が漏洩してしまう恐れがある為)
-- `サーバー`
+* `サーバー`
   - アプリケーションコードを保存し、クライアントからの要求を受信し、計算を実行し、適切な応答を返すデータセンター内のコンピュータを指す
-+ `Server Action`？
-  + form要素のactionに`"use server"`をつけた関数を渡すことで、JavaScriptではなくHTMLの機能だけを用いてサーバーにデータを送信することを可能にする技術
-  + Next13.4から導入された
-  + [【Next.js】Server Actionsを現場で使うテクニック](https://zenn.dev/rio_dev/articles/eb69fae0557f20)
-  + データ取得などの重い処理を非同期で実行できる
-  + そもそもformに文字を入力して送信ボタンを押したら、onClick->api client呼び出し->api-call関数の流れだったが、サーバーアクションになると直接apiをコールできる
-  + 使い所
-    + 以下のようなサーバーサイドで実行する必要がある処理を直接コンポーネントから呼び出せる
-      + フォーム送信
-      + DB操作
-      + ファイル操作
-    + アロー関数で定義するとエラーになることがあるので、従来のfunction定義をなるべく使用する
+
+- `Server Action`？
+  - form 要素の action に`"use server"`をつけた関数を渡すことで、JavaScript ではなく HTML の機能だけを用いてサーバーにデータを送信することを可能にする技術
+  - Next13.4 から導入された
+  - [【Next.js】Server Actions を現場で使うテクニック](https://zenn.dev/rio_dev/articles/eb69fae0557f20)
+  - データ取得などの重い処理を非同期で実行できる
+  - そもそも form に文字を入力して送信ボタンを押したら、onClick->api client 呼び出し->api-call 関数の流れだったが、サーバーアクションになると直接 api をコールできる
+  - 使い所
+    - 以下のようなサーバーサイドで実行する必要がある処理を直接コンポーネントから呼び出せる
+      - フォーム送信
+      - DB 操作
+      - ファイル操作
+    - アロー関数で定義するとエラーになることがあるので、従来の function 定義をなるべく使用する
     ```tsx
-    async function addPostAction () {
+    async function addPostAction() {
       "use server"; //これを定義しないとエラーになる
     }
-    return (
-      <form action={addPostAction}>
-      </form>
-    )
+    return <form action={addPostAction}></form>;
     ```
-+ `Server Compornent`？
-  + コンポーネントのレンダリングをサーバーで行う (SSR)
-  + 機密情報などがクライアント側にもれないので、セキュリティ的に安全
-  + 従来のSSRだと、hydration(サーバーがhtmlを生成->clientにhtmlを送信->jsの読み込み->`イベントリスナの追加やステート管理の初期化を行う` <-これ)
-  + メリット
+- `Server Compornent`？
+  - コンポーネントのレンダリングをサーバーで行う (SSR)
+  - 機密情報などがクライアント側にもれないので、セキュリティ的に安全
+  - 従来の SSR だと、hydration(サーバーが html を生成->client に html を送信->js の読み込み->`イベントリスナの追加やステート管理の初期化を行う` <-これ)
+  - メリット
     1. データフェッチが高速になる
-       1. サーバーがAPIやデータセンターと物理的に近い位置にある
-    2. サーバー側でレンダリング(SSR)されるのでJSバンドルサイズが削減される
-       1. client側で処理するJSの総量
-       2. ClientCompornentはJSバンドルに含まれるので注意
-       3. 逆にRSC Palyload (React Server Components Payload) 転送量が増えてしまう (トレードオフの関係)
+       1. サーバーが API やデータセンターと物理的に近い位置にある
+    2. サーバー側でレンダリング(SSR)されるので JS バンドルサイズが削減される
+       1. client 側で処理する JS の総量
+       2. ClientCompornent は JS バンドルに含まれるので注意
+       3. 逆に RSC Palyload (React Server Components Payload) 転送量が増えてしまう (トレードオフの関係)
     3. クライアントのスペックにほぼ依存しなくなる
-    4. SEOの向上
+    4. SEO の向上
     5. セキュリティの強化
-       1. APIキーやDBのクエリ
-  + ベストプラクティス
-    + なるべくServerCompornentを使う
-    + 末端のコンポーネントをClientCompornentにする
-      + 上位層のコンポーネントをClientCompornentにすると、その下のコンポーネントすべてClientCompornentになってしまう(Compornent boundary)
-  + 使い所
-    + データfetchが必要なコンポーネント
-    + SEO重視のコンテンツ
-    + 静的なUI部分
-+ `SSR (Server-Side-Rendering)`
+       1. API キーや DB のクエリ
+  - ベストプラクティス
+    - なるべく ServerCompornent を使う
+    - 末端のコンポーネントを ClientCompornent にする
+      - 上位層のコンポーネントを ClientCompornent にすると、その下のコンポーネントすべて ClientCompornent になってしまう(Compornent boundary)
+  - 使い所
+    - データ fetch が必要なコンポーネント
+    - SEO 重視のコンテンツ
+    - 静的な UI 部分
+- `SSR (Server-Side-Rendering)`
+
+* キャッシュ制御
+  - `no-store`を指定するとキャッシュされない (再リロードするとデータが変わる)
+  - `force-cache`を指定すると、キャッシュされて、リロードしても表示データが変わらない
+    - 何も指定しないとデフォルトで`force-cache`となる
+  - `revalidatePath`
+    - データ更新後に特定のページやルートのキャッシュを無効化
+    - 動的なコンテンツ更新が必要な時に使う (最新のデータを表示)
