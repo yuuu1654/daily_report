@@ -65,3 +65,25 @@ amplify push          # リソースのデプロイ
 # schema.graphqlを編集
 amplify push          # 変更をデプロイ
 ```
+
+
+
+# 検索の実装
+```ts
+import  { client } from "@/lib/amplify/client" // graphql apiをフロントエンドから呼び出す為に必要
+const searchPost = useCallback(async (title: string) => {
+  const { data, errors } = await client.graphql({
+    query: listPosts,
+    authMode: "none",
+    variables: {
+      filter: {
+        or: [
+          { title: { contains: title } },
+          { tags: { contains: "駆け出しエンジニアと繋がりたい" } }
+        ]
+      }
+    }
+  })
+})
+
+```

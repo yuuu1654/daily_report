@@ -69,3 +69,29 @@ rm -rf .next/cache
 - `revalidatePath`
   - データ更新後に特定のページやルートのキャッシュを無効化
   - 動的なコンテンツ更新が必要な時に使う (最新のデータを表示)
+
+
+
+
+# next.jsで`/[id]/page.tsx`の時にidを動的に取得する方法
++ searchParams
++ propsとして `( {params}: {params: {id: string} } )`paramsを受け取る
++ paramsからidとして展開して格納 `const { id } = params;`
+
+# next-authでは、jwtベースの認証を採用しており、以下のようなコードで、認証済みであればAPIのリクエストヘッダーにAuthorizationを指定する
+  + APIリクエストのヘッダーに`Authorizationトークン (アクセストークン) `を付与することで、ユーザーが認証された状態でAPIを使用できるようになる
+  ```ts
+  const createPost = useCallback(async (input: CreatePostInput) => {
+    const { data, errors } = await client.graphql({
+      query: createPost,
+      authMode: "none",
+      variables: {
+        input: input
+      }
+    }, session.data?.access_token ? { Authorization: session.data.access_token } : undefined)
+    return { data, errors }
+  }, [session.data?.access_token])
+  ```
+
+# Next 標準コンポーネント
++ `Link`コンポーネントは、next.jsの組み込みのプリフェッチ機能を使用するので、読み込み速度が`router.push()`よりも高速になるので、こちらを使うようにする
