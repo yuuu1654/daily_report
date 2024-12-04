@@ -77,6 +77,11 @@ rm -rf .next/cache
 + searchParams
 + propsとして `( {params}: {params: {id: string} } )`paramsを受け取る
 + paramsからidとして展開して格納 `const { id } = params;`
++ nextの動的ルーティング
+  + 以下のroute
+    + route :` app/posts/[id]/page.tsx`
+    + url : `posts/930fsfie029r`
+    + `params : { id: 930fsfie029r }`
 
 # next-authでは、jwtベースの認証を採用しており、以下のようなコードで、認証済みであればAPIのリクエストヘッダーにAuthorizationを指定する
   + APIリクエストのヘッダーに`Authorizationトークン (アクセストークン) `を付与することで、ユーザーが認証された状態でAPIを使用できるようになる
