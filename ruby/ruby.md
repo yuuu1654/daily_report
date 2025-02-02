@@ -44,4 +44,24 @@ add(1, 2) #=> 3
 
 
 
+## .map(&:to_sym)
+```rb
+# 文字列をシンボルに変換する省略記法 (下記と同義)
+.map { |name| name.to_sym }
+```
 
+## reject
++ 条件に合致しない項目で新たな配列を作成する
+https://docs.ruby-lang.org/ja/latest/method/Enumerable/i/reject.html
+```rb
+# 偶数を除外する
+(1..6).reject { |i| i % 2 === 0 } # => (1, 3, 5) 
+```
+
+
+## ボッチ演算子
+レシーバーがnilだった時に、後続のメソッドがエラーにならないように演算子
+```rb
+# ボッチ演算子
+nil&.to_s # => nil
+```
